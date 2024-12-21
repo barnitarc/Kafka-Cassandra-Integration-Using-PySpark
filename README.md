@@ -1,5 +1,5 @@
-CREATE TABLE IF NOT EXISTS transactions_aggregated (
-    transaction_id UUID,
+CREATE TABLE IF NOT EXISTS transactions (
+    transaction_id UUID primary key,
     account_number TEXT,
     account_holder TEXT,
     transaction_type TEXT,
@@ -19,6 +19,5 @@ CREATE TABLE IF NOT EXISTS transactions_aggregated (
     discount_applied BOOLEAN,
     products_list TEXT,
     total_price_spent DOUBLE,
-    total_quantity_bought INT,
-    PRIMARY KEY (account_number, transaction_id)
+    total_quantity_bought INT
 );
