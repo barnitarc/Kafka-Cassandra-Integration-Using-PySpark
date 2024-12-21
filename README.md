@@ -11,7 +11,6 @@ This project demonstrates how to integrate Apache Kafka and Apache Cassandra usi
 - [Configuration](#configuration)
 - [Running the Application](#running-the-application)
 - [Cassandra Table Schema](#cassandra-table-schema)
-- [Contributing](#contributing)
 
 ## Introduction
 
@@ -133,7 +132,9 @@ Configure the application by modifying the `config/*_config.json` files. This fi
    ```
    
    Ensure that the package versions match your Spark and Scala versions.
+   
    ![Run Consumer File](https://github.com/barnitarc/Kafka-Cassandra-Integration-Using-PySpark/blob/main/images/run-consumer-file.png)
+   
    ![Run Consumer File-2](https://github.com/barnitarc/Kafka-Cassandra-Integration-Using-PySpark/blob/main/images/run-consumer-file-2.png)
 
 ## Cassandra Table Schema
@@ -170,15 +171,14 @@ This schema is designed to store transaction data processed by the PySpark appli
 ## Check Cassandra Table data
 
 After running the application, check if the data is getting loaded in cqlsh table.
+
 ![check table data](https://github.com/barnitarc/Kafka-Cassandra-Integration-Using-PySpark/blob/main/images/data-in-cassandra-table.png)
 
-## Contributing
-
-Contributions are welcome! Please fork the repository and submit a pull request with your changes. Ensure that your code adheres to the project's coding standards and includes appropriate tests.
-
 ---
+### Keep Contributing!
+Feel free to continue working on this project if you'd like to enhance it further! Whether it's adding new features, improving performance, fixing bugs, or simply experimenting with new ideas, your contributions are always welcome.
+If you have any suggestions or improvements, please fork the repository, make your changes, and submit a pull request.
 
----
+Happy coding and thanks for being part of this project!
 
-Feel free to explore, modify, and enhance this project to suit your needs. If you encounter any issues or have questions, please open an issue in the repository.
 
