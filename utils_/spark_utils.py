@@ -16,11 +16,11 @@ def create_spark_session(config_path):
     with open(config_path) as f:
         config = json.load(f)
 
+    packages="org.apache.spark:spark-sql-kafka-0-10_2.12:3.1.2,com.datastax.spark:spark-cassandra-connector_2.12:3.0.0"
     spark = SparkSession.builder \
         .appName(config["spark_config"]["spark.app.name"]) \
         .master(config["spark_config"]["spark.master"]) \
-        .config("spark.jars.packages", "org.apache.spark:spark-sql-kafka-0-10_2.12:3.1.2")\
-        .config("spark.jars.packages", "com.datastax.spark:spark-cassandra-connector_2.12:3.0.0")\
+        .config("spark.jars.packages",packages)\
         .config("spark.sql.shuffle.partitions", config["spark_config"]["spark.sql.shuffle.partitions"]) \
         .config("spark.streaming.backpressure.enabled", config["spark_config"]["spark.streaming.backpressure.enabled"]) \
         .config("spark.streaming.backpressure.initialRate", config["spark_config"]["spark.streaming.backpressure.initialRate"]) \
@@ -41,11 +41,12 @@ def read_stream_from_kafka(spark, config_path):
     
     df = spark.readStream \
         .format("kafka") \
-        .option("kafka.bootstrap.servers", "localhost:9092") \
+        .option("kafka.bootstrap.servers", config['kafka_bootstrap_servers']) \
         .option("failOnDataLoss","false")\
-        .option("subscribe","incoming_finance_data") \
+        .option("subscribe",config['input_topic']) \
         .option("startingOffsets", "latest") \
         .load()
+
         
     
     return df
