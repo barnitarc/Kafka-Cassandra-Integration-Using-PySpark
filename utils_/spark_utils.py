@@ -61,7 +61,6 @@ def process_stream_data(df):
         StructField("product_name", StringType(), True),
         StructField("quantity", IntegerType(), True),
         StructField("unit_price", FloatType(), True),
-        StructField("total_price", FloatType(), True),
     ])
 
     schema = StructType([
@@ -127,7 +126,6 @@ def process_stream_data(df):
         col("transaction_item.product_name").alias("product_name"),
         col("transaction_item.quantity").alias("quantity"),
         col("transaction_item.unit_price").alias("unit_price"),
-        col("transaction_item.total_price").alias("total_price"),
         col("shipping_info.address").alias("shipping_address"),
         col("shipping_info.shipping_method").alias("shipping_method"),
         col("shipping_info.shipping_cost").alias("shipping_cost"),
@@ -180,7 +178,7 @@ def process_stream_data(df):
     # df_with_running_total = df_transformed \
     #     .withColumn("running_total", sum("amount").over(window_spec))
 
-    df_transformed=df_transformed.dropDuplicates(["merchant_name", "transaction_date","amount","transaction_id"])
+    df_transformed=df_account_summary.dropDuplicates(["merchant_name", "transaction_date","amount","transaction_id"])
     df_grouped_by_merchant = df_transformed \
         .groupBy("merchant_category") \
         .agg(

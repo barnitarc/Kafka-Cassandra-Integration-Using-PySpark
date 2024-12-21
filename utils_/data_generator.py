@@ -27,7 +27,6 @@ def generate_fake_finance_data():
                 "product_name": fake.word(),
                 "quantity": random.randint(1, 5),
                 "unit_price": round(random.uniform(5, 500), 2),
-                "total_price": round(random.uniform(5, 500), 2) * random.randint(1, 5),
             }
             for _ in range(random.randint(1, 3))  # Random number of items (1-3)
         ],
