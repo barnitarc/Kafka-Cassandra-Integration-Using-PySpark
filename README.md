@@ -20,7 +20,7 @@ In modern data architectures, integrating streaming platforms like Apache Kafka 
 
 The data pipeline consists of the following components:
 
-1. **Kafka Producer**: Simulates real-time data by sending messages to a Kafka topic.
+1. **Kafka Producer**: Simulates real-time data(produced by faker) by sending messages to a Kafka topic.
 2. **PySpark Structured Streaming**: Consumes messages from the Kafka topic, processes the data, and performs necessary transformations.
 3. **Cassandra Database**: Stores the processed data for further analysis and querying.
 
@@ -29,7 +29,7 @@ The data pipeline consists of the following components:
 The following steps outline the process flow and transformations applied to the data:
 
 1. **Data Ingestion**:
-   - Kafka producer generates transaction data in JSON format and publishes it to a Kafka topic.
+   - Kafka producer generates transaction data in JSON format by help og faker module in Python and publishes it to a Kafka topic.
 
 2. **Data Consumption**:
    - PySpark Structured Streaming reads data from the Kafka topic as a streaming source.
