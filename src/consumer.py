@@ -74,6 +74,7 @@ def main():
     try:
         df_processed \
             .writeStream\
+            .trigger(processingTime="10 seconds") \
             .outputMode("update")\
             .foreachBatch(writeToCassandra)\
             .option("checkpointLocation", spark_config["checkpoint_dir"]) \
