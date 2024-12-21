@@ -20,6 +20,7 @@ def create_spark_session(config_path):
         .appName(config["spark_config"]["spark.app.name"]) \
         .master(config["spark_config"]["spark.master"]) \
         .config("spark.jars.packages", "org.apache.spark:spark-sql-kafka-0-10_2.12:3.1.2")\
+        .config("spark.jars.packages", "com.datastax.spark:spark-cassandra-connector_2.12:3.0.0")\
         .config("spark.sql.shuffle.partitions", config["spark_config"]["spark.sql.shuffle.partitions"]) \
         .config("spark.streaming.backpressure.enabled", config["spark_config"]["spark.streaming.backpressure.enabled"]) \
         .config("spark.streaming.backpressure.initialRate", config["spark_config"]["spark.streaming.backpressure.initialRate"]) \
@@ -90,56 +91,86 @@ def process_stream_data(df):
     df_json = df.select(from_json(col("value").cast("string"), schema).alias("data"))
     
     # Extract the nested fields from the JSON
+    
     df_exploded = df_json.select(
-        "data.transaction_id",
-        "data.account_number",
-        "data.account_holder",
-        "data.transaction_type",
-        "data.amount",
-        "data.currency",
-        "data.transaction_date",
-        "data.merchant_name",
-        "data.merchant_category",
-        "data.location",
-        "data.balance_after_transaction",
-        explode("data.transaction_items").alias("transaction_item"),
-        "data.shipping_info",
-        "data.customer_feedback",
-        "data.discount_applied"
+        col("data.transaction_id"),
+        col("data.account_number"),
+        col("data.account_holder"),
+        col("data.transaction_type"),
+        col("data.amount"),
+        col("data.currency"),
+        col("data.transaction_date"),
+        col("data.merchant_name"),
+        col("data.merchant_category"),
+        col("data.location"),
+        col("data.balance_after_transaction"),
+        explode(col("data.transaction_items")).alias("transaction_item"),
+        col("data.shipping_info"),
+        col("data.customer_feedback"),
+        col("data.discount_applied")
     )
 
-    # Flatten the transaction item structure
+    # Flatten the exploded DataFrame
     df_flat = df_exploded.select(
-        "transaction_id",
-        "account_number",
-        "account_holder",
-        "transaction_type",
-        "amount",
-        "currency",
-        "transaction_date",
-        "merchant_name",
-        "merchant_category",
-        "location",
-        "balance_after_transaction",
-        "transaction_item.item_id",
-        "transaction_item.product_name",
-        "transaction_item.quantity",
-        "transaction_item.unit_price",
-        "transaction_item.total_price",
-        "shipping_info.address",
-        "shipping_info.shipping_method",
-        "shipping_info.shipping_cost",
-        "shipping_info.estimated_delivery",
-        "shipping_info.tracking_number",
-        "customer_feedback",
-        "discount_applied"
+        col("transaction_id"),
+        col("account_number"),
+        col("account_holder"),
+        col("transaction_type"),
+        col("amount"),
+        col("currency"),
+        col("transaction_date"),
+        col("merchant_name"),
+        col("merchant_category"),
+        col("location"),
+        col("balance_after_transaction"),
+        col("transaction_item.item_id").alias("item_id"),
+        col("transaction_item.product_name").alias("product_name"),
+        col("transaction_item.quantity").alias("quantity"),
+        col("transaction_item.unit_price").alias("unit_price"),
+        col("transaction_item.total_price").alias("total_price"),
+        col("shipping_info.address").alias("shipping_address"),
+        col("shipping_info.shipping_method").alias("shipping_method"),
+        col("shipping_info.shipping_cost").alias("shipping_cost"),
+        col("shipping_info.estimated_delivery").alias("estimated_delivery"),
+        col("shipping_info.tracking_number").alias("tracking_number"),
+        col("customer_feedback"),
+        col("discount_applied")
     )
-        # Perform some data transformations (Example: Clean up null values and apply transformations)
-    df_transformed = df_flat \
+    
+    df_flat = df_flat \
         .withColumn("amount", col("amount").cast(FloatType())) \
         .withColumn("transaction_date", to_timestamp(col("transaction_date"), "yyyy-MM-dd")) \
         .fillna({"amount": 0, "balance_after_transaction": 0}) \
         .filter(col("transaction_type").isNotNull())  # Filter out rows with null transaction_type
+
+    df_with_total_price = df_flat.withColumn(
+        "total_item_price", 
+        F.col("unit_price") * F.col("quantity")
+    )
+    df_account_summary = df_with_total_price.groupBy("transaction_id",
+            "account_number",
+            "account_holder",
+            "transaction_type",
+            "amount",
+            "currency",
+            "transaction_date",
+            "merchant_name",
+            "merchant_category",
+            "location",
+            "balance_after_transaction",
+            "shipping_address",
+            "shipping_method",
+            "shipping_cost",
+            "estimated_delivery",
+            "tracking_number",
+            "customer_feedback",
+            "discount_applied").agg(
+        F.concat_ws(",", F.collect_list("product_name")).alias("products_list"),
+        F.sum("total_item_price").alias("total_price_spent"),
+        F.sum("quantity").alias("total_quantity_bought")
+    )
+        # Perform some data transformations (Example: Clean up null values and apply transformations)
+    
 
     # Wont work in streaming- Window function example: Calculate running total of transaction amount per account
     # window_spec = Window \
@@ -182,6 +213,6 @@ def process_stream_data(df):
         "avg_amount",
         "transaction_count"
     )
-    df=df_with_window
     
-    return df_grouped_by_merchant
+    
+    return df_account_summary
