@@ -1,0 +1,13 @@
+{
+    "spark_config": {
+        "spark.app.name": "Kafka-Spark-ETL",
+        "spark.master": "local[*]",
+        "spark.sql.shuffle.partitions": "10", 
+        "spark.streaming.backpressure.enabled": "true",
+        "spark.streaming.backpressure.initialRate": "1000",
+        "spark.streaming.kafka.maxRatePerPartition": "500",  
+        "spark.executor.memory": "4g",
+        "spark.driver.memory": "2g"
+    },
+    "checkpoint_dir": "/tmp/kafka_spark_checkpoint_test_2"
+}
