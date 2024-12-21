@@ -106,6 +106,7 @@ Follow these steps to set up the project:
         or
      cqlsh
      ```
+   ![Check Cassandra status](https://github.com/barnitarc/Kafka-Cassandra-Integration-Using-PySpark/blob/main/images/cassandra-status.png)
 
 ## Configuration
 
@@ -120,6 +121,8 @@ Configure the application by modifying the `config/*_config.json` files. This fi
    ```bash
    python3 src/producer.py
    ```
+   ![Run Producer File](https://github.com/barnitarc/Kafka-Cassandra-Integration-Using-PySpark/blob/main/images/producer.png)
+
 
 2. **Start the PySpark Structured Streaming Application**:
 
@@ -128,8 +131,10 @@ Configure the application by modifying the `config/*_config.json` files. This fi
    ```bash
    spark-submit --packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.4.0,com.datastax.spark:spark-cassandra-connector_2.12:3.4.0 src/consumer.py
    ```
-
+   
    Ensure that the package versions match your Spark and Scala versions.
+   ![Run Consumer File](https://github.com/barnitarc/Kafka-Cassandra-Integration-Using-PySpark/blob/main/images/run-consumer-file.png)
+   ![Run Consumer File-2](https://github.com/barnitarc/Kafka-Cassandra-Integration-Using-PySpark/blob/main/images/run-consumer-file-2.png)
 
 ## Cassandra Table Schema
 
@@ -165,7 +170,7 @@ This schema is designed to store transaction data processed by the PySpark appli
 ## Check Cassandra Table data
 
 After running the application, check if the data is getting loaded in cqlsh table.
-<!--![image](https://github.com/user-attachments/assets/69572182-fc7e-475d-b93f-53f4d5dc0362)-->
+![check table data](https://github.com/barnitarc/Kafka-Cassandra-Integration-Using-PySpark/blob/main/images/data-in-cassandra-table.png)
 
 ## Contributing
 
