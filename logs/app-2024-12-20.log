@@ -1,0 +1,74 @@
+20/12/24 17:52:04 - Kafka-Spark-ETL - INFO - Start producing data
+20/12/24 17:52:04 - kafka.conn - INFO - <BrokerConnection node_id=bootstrap-0 host=localhost:9092 <connecting> [IPv4 ('127.0.0.1', 9092)]>: connecting to localhost:9092 [('127.0.0.1', 9092) IPv4]
+20/12/24 17:52:04 - kafka.conn - INFO - Probing node bootstrap-0 broker version
+20/12/24 17:52:04 - kafka.conn - INFO - <BrokerConnection node_id=bootstrap-0 host=localhost:9092 <connecting> [IPv4 ('127.0.0.1', 9092)]>: Connection complete.
+20/12/24 17:52:04 - kafka.conn - INFO - Broker version identified as 2.5.0
+20/12/24 17:52:04 - kafka.conn - INFO - Set configuration api_version=(2, 5, 0) to skip auto check_version requests on startup
+20/12/24 17:52:04 - Kafka-Spark-ETL - INFO - Sent to Kafka
+20/12/24 17:52:04 - kafka.conn - INFO - <BrokerConnection node_id=0 host=barnita-VirtualBox:9092 <connecting> [IPv4 ('127.0.1.1', 9092)]>: connecting to barnita-VirtualBox:9092 [('127.0.1.1', 9092) IPv4]
+20/12/24 17:52:04 - kafka.conn - INFO - <BrokerConnection node_id=0 host=barnita-VirtualBox:9092 <conn20/12/24 17:53:29 - py4j.clientserver - INFO - Error while receiving.
+Traceback (most recent call last):
+  File "/home/barnita/.local/lib/python3.6/site-packages/py4j/clientserver.py", line 511, in send_command
+    answer = smart_decode(self.stream.readline()[:-1])
+RuntimeError: reentrant call inside <_io.BufferedReader name=4>
+20/12/24 17:53:29 - py4j.clientserver - INFO - Closing down clientserver connection
+20/12/24 17:53:29 - root - ERROR - Exception while sending command.
+Traceback (most recent call last):
+  File "/home/barnita/.local/lib/python3.6/site-packages/py4j/clientserver.py", line 511, in send_command
+    answer = smart_decode(self.stream.readline()[:-1])
+RuntimeError: reentrant call inside <_io.BufferedReader name=4>
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/barnita/.local/lib/python3.6/site-packages/py4j/java_gateway.py", line 1038, in send_command
+    response = connection.send_command(command)
+  File "/home/barnita/.local/lib/python3.6/site-packages/py4j/clientserver.py", line 540, in send_command
+    "Error while sending or receiving", e, proto.ERROR_ON_RECEIVE)
+py4j.protocol.Py4JNetworkError: Error while sending or receiving
+20/12/24 17:53:29 - py4j.clientserver - INFO - Error while receiving.
+Traceback (most recent call last):
+  File "/home/barnita/.local/lib/python3.6/site-packages/py4j/clientserver.py", line 511, in send_command
+    answer = smart_decode(self.stream.readline()[:-1])
+  File "/usr/lib/python3.6/socket.py", line 586, in readinto
+    return self._sock.recv_into(b)
+  File "/home/barnita/.local/lib/python3.6/site-packages/pyspark/context.py", line 292, in signal_handler
+    self.cancelAllJobs()
+  File "/home/barnita/.local/lib/python3.6/site-packages/pyspark/context.py", line 1195, in cancelAllJobs
+    self._jsc.sc().cancelAllJobs()
+  File "/home/barnita/.local/lib/python3.6/site-packages/py4j/java_gateway.py", line 1322, in __call__
+    answer, self.gateway_client, self.target_id, self.name)
+  File "/home/barnita/.local/lib/python3.6/site-packages/pyspark/sql/utils.py", line 111, in deco
+    return f(*a, **kw)
+  File "/home/barnita/.local/lib/python3.6/site-packages/py4j/protocol.py", line 336, in get_return_value
+    format(target_id, ".", name))
+py4j.protocol.Py4JError: An error occurred while calling o30.sc
+20/12/24 17:53:29 - py4j.clientserver - INFO - Closing down clientserver connection
+20/12/24 17:53:29 - root - ERROR - Exception while sending command.
+Traceback (most recent call last):
+  File "/home/barnita/.local/lib/python3.6/site-packages/py4j/clientserver.py", line 511, in send_command
+    answer = smart_decode(self.stream.readline()[:-1])
+  File "/usr/lib/python3.6/socket.py", line 586, in readinto
+    return self._sock.recv_into(b)
+  File "/home/barnita/.local/lib/python3.6/site-packages/pyspark/context.py", line 292, in signal_handler
+    self.cancelAllJobs()
+  File "/home/barnita/.local/lib/python3.6/site-packages/pyspark/context.py", line 1195, in cancelAllJobs
+    self._jsc.sc().cancelAllJobs()
+  File "/home/barnita/.local/lib/python3.6/site-packages/py4j/java_gateway.py", line 1322, in __call__
+    answer, self.gateway_client, self.target_id, self.name)
+  File "/home/barnita/.local/lib/python3.6/site-packages/pyspark/sql/utils.py", line 111, in deco
+    return f(*a, **kw)
+  File "/home/barnita/.local/lib/python3.6/site-packages/py4j/protocol.py", line 336, in get_return_value
+    format(target_id, ".", name))
+py4j.protocol.Py4JError: An error occurred while calling o30.sc
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/barnita/.local/lib/python3.6/site-packages/py4j/java_gateway.py", line 1038, in send_command
+    response = connection.send_command(command)
+  File "/home/barnita/.local/lib/python3.6/site-packages/py4j/clientserver.py", line 540, in send_command
+    "Error while sending or receiving", e, proto.ERROR_ON_RECEIVE)
+py4j.protocol.Py4JNetworkError: Error while sending or receiving
+20/12/24 17:53:29 - py4j.clientserver - INFO - Closing down clientserver connection
+20/12/24 17:53:29 - Kafka-Spark-ETL - ERROR - Error writing processed data to Kafka: An error occurred while calling o209.awaitTermination
