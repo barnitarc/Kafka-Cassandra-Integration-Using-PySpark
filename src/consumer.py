@@ -4,11 +4,10 @@ import json
 import logging
 from utils_.logging_config import *
 
-#logger = logging.getLogger(__name__)
+
 
 def main():
     logger.info("Starting the streaming job...")
-
     # Load configurations
     logger.info("Loading Kafka and Spark configurations")
     try:
@@ -27,6 +26,22 @@ def main():
         logger.error(f"Error loading Spark configuration: {e}")
         return
 
+    try:
+        with open('config/cassandra_config.json') as f:
+            cassandra_config = json.load(f)
+        logger.info("Cassandra configuration loaded successfully.")
+    except Exception as e:
+        logger.error(f"Error loading Cassandra configuration: {e}")
+        return
+    def writeToCassandra(writeDf,epochId):
+        with open('config/cassandra_config.json') as f:
+            cassandra_config = json.load(f)
+        writeDf.write.format("org.apache.spark.sql.cassandra")\
+                    .mode("append")\
+                    .option("spark.cassandra.connection.host",cassandra_config['cassandra_host'])\
+                    .option("keyspace", cassandra_config['cassandra_keyspace'])\
+                    .option("table", cassandra_config['cassandra_table'])\
+                    .save()
     output_csv_dir = 'output'
     
     # Create Spark session
@@ -55,24 +70,35 @@ def main():
     except Exception as e:
         logger.error(f"Error processing stream data: {e}")
         return
-
-    # Write the processed data to Kafka
-    logger.info("Writing processed data to Kafka...")
+    logger.info("Writing processed data to Cassandra...")
     try:
         df_processed \
-            .selectExpr("to_json(struct(*)) AS value") \
-            .writeStream \
-            .trigger(processingTime='15 seconds') \
-            .outputMode("update") \
-            .format("kafka") \
-            .option("kafka.bootstrap.servers", kafka_config["kafka_bootstrap_servers"]) \
-            .option("topic", kafka_config["output_topic"]) \
+            .writeStream\
+            .outputMode("update")\
+            .foreachBatch(writeToCassandra)\
             .option("checkpointLocation", spark_config["checkpoint_dir"]) \
             .start() \
             .awaitTermination()
-        logger.info("Processed data successfully written to Kafka.")
+        logger.info("Processed data successfully written to Cassandra.")
     except Exception as e:
-        logger.error(f"Error writing processed data to Kafka: {e}")
+        logger.error(f"Error writing processed data to Cassandra: {e}")
+    # Write the processed data to Kafka
+    # logger.info("Writing processed data to Kafka...")
+    # try:
+    #     df_processed \
+    #         .selectExpr("to_json(struct(*)) AS value") \
+    #         .writeStream \
+    #         .trigger(processingTime='15 seconds') \
+    #         .outputMode("update") \
+    #         .format("kafka") \
+    #         .option("kafka.bootstrap.servers", kafka_config["kafka_bootstrap_servers"]) \
+    #         .option("topic", kafka_config["output_topic"]) \
+    #         .option("checkpointLocation", spark_config["checkpoint_dir"]) \
+    #         .start() \
+    #         .awaitTermination()
+    #     logger.info("Processed data successfully written to Kafka.")
+    # except Exception as e:
+    #     logger.error(f"Error writing processed data to Kafka: {e}")
     
     # Optionally write the processed data to CSV (if uncommented)
     #logger.info("Writing processed data to CSV...")
