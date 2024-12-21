@@ -1,0 +1,5 @@
+{
+    "cassandra_keyspace":"test",
+    "cassandra_table":"transactions",
+    "cassandra_host":"127.0.0.1"
+}
